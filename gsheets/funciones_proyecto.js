@@ -150,3 +150,42 @@ function PCOMPZ(x1, n1, x2, n2)
   z = num / denom;
   return z;
 }
+
+function MARASCUILLO(m_o, metric_name, metric_val, qchisq)
+{
+  let ps = [];
+  let row;
+  let i;
+  let p;
+  metric_val = metric_val.toUpperCase();
+  for (i = 0; m_o[i][0] != metric_val; i++)
+    ;
+  if (METRICS[metric_name].length < i)
+    throw new Error("Revisar el nombre de métrica y/o el valor de métrica ingresado")
+  row = i;
+  for (i = 1; i < m_o[row].length - 1; i++) {
+    p = m_o[row][i] / m_o[m_o.length - 1][i];
+    ps.push(p);
+  }
+
+  let out = [];
+  let diff;
+  let stat;
+  let ni;
+  let nj;
+  let signif;
+
+  out.push([metric_val, "|pi - pj|", "val", "significant?"])
+  for (i = 0; i < ps.length; i++) {
+    for (j = i+1; j < ps.length; j++) {
+      diff = Math.abs(ps[i] - ps[j]);
+      ni = m_o[m_o.length-1][i+1];
+      nj = m_o[m_o.length-1][j+1];
+      stat = qchisq**(1/2) * ((ps[i]*(1-ps[i])/ni) + (ps[j]*(1-ps[j])/nj))**(1/2);
+      signif = diff > stat ? "yes" : "no";
+      row = ["|p" + i + " - p" + j + "|", diff, stat, signif];
+      out.push(row);
+    }
+  }
+  return out;
+}
