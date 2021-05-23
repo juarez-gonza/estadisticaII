@@ -11,7 +11,12 @@ METRICS = {
 
 NAVEGADORES = ["Chrome", "Firefox", "Safari"];
 
-TOTALSTR = "Total"
+TOTALSTR = "Total";
+
+function COPYRANGE(range)
+{
+  return range;
+}
 
 function exact_match_counter(range, tomatch)
 {
@@ -175,7 +180,7 @@ function MARASCUILLO(m_o, metric_name, metric_val, qchisq)
   let nj;
   let signif;
 
-  out.push([metric_val, "|pi - pj|", "val", "significant?"])
+  out.push([metric_val, "|pi - pj|", "crit", "significant?", "max(pi, pj)"])
   for (i = 0; i < ps.length; i++) {
     for (j = i+1; j < ps.length; j++) {
       diff = Math.abs(ps[i] - ps[j]);
@@ -183,9 +188,37 @@ function MARASCUILLO(m_o, metric_name, metric_val, qchisq)
       nj = m_o[m_o.length-1][j+1];
       stat = qchisq**(1/2) * ((ps[i]*(1-ps[i])/ni) + (ps[j]*(1-ps[j])/nj))**(1/2);
       signif = diff > stat ? "yes" : "no";
-      row = ["|p" + i + " - p" + j + "|", diff, stat, signif];
+      row = ["|p" + NAVEGADORES[i][0] + " - p" + NAVEGADORES[j][0] + "|", diff, stat, signif, "p" + (ps[i] > ps[j] ? NAVEGADORES[i][0] : NAVEGADORES[j][0])];
       out.push(row);
     }
   }
   return out;
+}
+
+function PROP_RXC(m_o)
+{
+  let m_vals = [];
+  let m_ps = [];
+  let ret = [];
+  let i;
+  let p;
+  const r = m_o.length;
+  const c = m_o[r - 1].length;
+  const total = m_o[r - 1][c - 1];
+
+  for (i = 1; i < r; i++)
+    m_vals.push(m_o[i][0]);
+
+  for (i = 1; i < r; i++) {
+    p = m_o[i][c - 1] / total;
+    m_ps.push(p);
+  }
+
+  for (i = 0; i < m_ps.length; i++) {
+    ret.push([]);
+    ret[i].push(m_vals[i]);
+    ret[i].push(m_ps[i]);
+  }
+
+  return ret;
 }
