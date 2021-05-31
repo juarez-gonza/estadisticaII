@@ -37,9 +37,8 @@ if __name__ == "__main__":
                     fields = line.split(",")
                     bname = fields[BNAME_IDX].lower()
                     cvss_browser[bname]["scores"].append(score)
-            print("==========",year,"==========")
             for bname in cvss_browser:
-                plt.hist(cvss_browser[bname]["scores"], color=cvss_browser[bname]["color"], alpha=0.5, bins=10, label=bname)
+                plt.hist(cvss_browser[bname]["scores"], color=cvss_browser[bname]["color"], alpha=0.7, bins=10, label=bname)
                 cvss_browser[bname]["scores"] = []
             plt.gca().set(title=("Histograma de CVSS Score en Firefox, Chrome y Safari %s" % year))
             if first:
